@@ -1,0 +1,8 @@
+.firstname{
+    text-transform: capitalize;
+}
+
+.lastname{
+    text-transform: uppercase;
+    color: red;
+}
