@@ -1,10 +1,5 @@
 import {useState} from 'react';
 
-interface AppState{
-    essay : string,
-    flavor : string,
-    name : string
-}
 
 const App = () => {
     const [essay, setEssay] = useState<string>('Écrivez un essai à propos de votre élément du DOM préféré');
