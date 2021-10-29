@@ -1,12 +1,6 @@
 import { useEffect, useState, Fragment } from "react";
 import User from './User';
 
-interface ListDataProps{
-    users: User[];
-}
-
-
-
 
 function UserList() : JSX.Element{
 const [usersData, setUsersData] = useState<User[]>()
