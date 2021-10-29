@@ -27,3 +27,5 @@ const FlavorForm = () => {
     </form>
   );
 }
+
+export default FlavorForm;
