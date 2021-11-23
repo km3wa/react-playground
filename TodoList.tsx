@@ -1,81 +1,51 @@
-import { useState, useEffect, ChangeEvent } from 'react';
-import TodoItem from './TodoItem'
+import { Fragment } from 'react';
+import ITodo from './ITodo';
+import TodoItem from './TodoItem';
 
-let newTodo = {
-  id: 1,
-  title: 'ma super tâche',
-  isCompleted: false,
-  isEditing: false
+interface TodoListProps {
+  data: ITodo[],
+  filter: string,
+  modifier(array: ITodo[]): void
 }
 
-interface ITodo {
-  id: number,
-  title: string,
-  isCompleted: boolean,
-  isEditing: boolean
-};
-
-const TodoList = (): JSX.Element => {
-  const [todos, setTodos] = useState<ITodo[]>([]);
-  const [input, setInput] = useState<string>("");
-  const [nextId, setNextId] = useState<number>(0)
-
-  useEffect(() => {
-    console.log(todos);
-    setInput("");
-  }, [todos])
+const TodoList = (props: TodoListProps): JSX.Element => {
 
 
-  const handleSubmit = (event: ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    setTodos(previousState => ([...previousState, {
-      id: nextId,
-      title: input,
-      isCompleted: false,
-      isEditing: false
-    }]))
-    setNextId(previousState => (previousState + 1));
+  const setIsCompleted = (isDone: boolean, indexTodo: number) => {
+    const tempTodos = props.data;
+    tempTodos[indexTodo].isCompleted = isDone;
+    console.log(tempTodos);
+    props.modifier(tempTodos);
   }
 
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
+  const handleDelete = (indexTodo: number) => {
+    const tempTodos = props.data;
+    tempTodos.splice(indexTodo, 1);
+    props.modifier(tempTodos);
   }
 
-  const handleEdit = (isDone : boolean, indexTodo : number) => {
-    const tempTodo = todos;
+  const isFiltered = (isCompleted: boolean): boolean => {
+    switch (props.filter) {
+      case "complete":
+        return isCompleted;
 
-    tempTodo[indexTodo].isCompleted = isDone;
-    setTodos(tempTodo);
+      case "incomplete":
+        return !isCompleted;
+    }
+
+    return true;
   }
-
-  const handleDelete = (indexTodo : number) => {
-    const tempTodo = todos;
-
-    tempTodo.splice(indexTodo, 1);
-    setTodos(tempTodo);
-  }
-
-
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Task:
-          <input type="text" name="title" value={input} onChange={handleChange} />
-        </label>
-        <input type="submit" value="Envoyer" />
-      </form>
-
-      {(todos != null) && todos.map((todo, indexTodo) => (
-        <ul key={todo.id}>
-          <li><TodoItem todo={todo} arrayKey={indexTodo} handleEdit={handleEdit} handleDelete={handleDelete}/></li>
-        </ul>
+    <Fragment>
+      {(props.data != null) && props.data.map((todo, indexTodo) => (
+        isFiltered(todo.isCompleted) && (
+          <ul key={todo.id}>
+            <li><TodoItem item={todo} itemKeyInArray={indexTodo} setIsCompleted={setIsCompleted} handleDelete={handleDelete} /></li>
+          </ul>)
       )
       )}
-    </div>
+    </Fragment>
   )
 }
 

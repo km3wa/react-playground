@@ -1,48 +1,43 @@
-import { ChangeEvent } from 'react';
+import { Fragment, ChangeEvent, CSSProperties } from 'react';
+import ITodo from './ITodo';
 
 interface TodoItemProps {
-  todo: ITodo,
-  arrayKey: number,
-  handleEdit(isDone: boolean, indexTodo: number): void,
-  handleDelete(indexTodo: number) : void
+  item: ITodo,
+  itemKeyInArray: number,
+  setIsCompleted(isDone: boolean, indexTodo: number): void,
+  handleDelete(indexTodo: number): void
 }
 
-interface ITodo {
-  id: number,
-  title: string,
-  isCompleted: boolean,
-  isEditing: boolean
-};
 
 const TodoItem = (props: TodoItemProps): JSX.Element => {
-  //const [editedTodo, setEditedTodo] = useState<ITodo>(props.todo);
 
-  const arrayKey = props.arrayKey;
+  const itemKeyInArray = props.itemKeyInArray;
 
-  const handleEdit = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    props.handleEdit(event.target.checked, arrayKey);
+    props.setIsCompleted(event.target.checked, itemKeyInArray);
   }
+
 
   const handleDelete = (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    props.handleDelete(arrayKey)
+    props.handleDelete(itemKeyInArray)
   }
 
-  const checkCompleted = () => {
-    return props.todo.isCompleted ? {textDecoration: "line-through"} : {};
+  const checkCompleted = (): CSSProperties => {
+    return props.item.isCompleted ? { textDecoration: "line-through" } : {};
   }
 
 
   return (
-    <div>
+    <Fragment>
       <form onSubmit={handleDelete}>
-        <label style={checkCompleted()}> {props.todo.title}
-          <input type="checkbox" checked={props.todo.isCompleted} onChange={handleEdit} />
+        <label style={checkCompleted()}> {props.item.title}
+          <input type="checkbox" checked={props.item.isCompleted} onChange={handleCheckboxChange} />
         </label>
-        <input disabled={!props.todo.isCompleted} type="submit" value="Supprimer de la liste" />
+        <input disabled={!props.item.isCompleted || props.item.isEditing} type="submit" value="Supprimer de la liste" />
       </form>
-    </div>
+    </Fragment>
   )
 }
 
